@@ -3,7 +3,6 @@ package com.projeto.usuario.usuario.infraestructure.repository;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 @Repository

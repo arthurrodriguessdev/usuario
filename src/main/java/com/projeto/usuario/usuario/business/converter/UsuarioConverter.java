@@ -7,7 +7,6 @@ import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
