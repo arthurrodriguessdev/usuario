@@ -1,6 +1,7 @@
 package com.projeto.usuario.usuario.infraestructure.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name="telefone")
+@Builder
 public class Telefone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
