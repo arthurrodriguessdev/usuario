@@ -1,6 +1,8 @@
 package com.projeto.usuario.usuario.controller;
 
 import com.projeto.usuario.usuario.business.UsuarioService;
+import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
+import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
 import com.projeto.usuario.usuario.infraestructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,16 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioDTO> atualizarDadosUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDto){
         return ResponseEntity.ok(usuarioService.atualizarDadosUsuario(usuarioDto, id));
+    }
+
+    @PutMapping("/enderecos/{id}")
+    public ResponseEntity<EnderecoDTO> atualizarDadosEndereco(@PathVariable Long id, @RequestBody EnderecoDTO enderecoDTO){
+        return ResponseEntity.ok(usuarioService.atualizarDadosEndereco(id, enderecoDTO));
+    }
+
+    @PutMapping("/telefones/{id}")
+    public ResponseEntity<TelefoneDTO> atualizarDadosTelefone(@PathVariable Long id, @RequestBody TelefoneDTO telefoneDTO){
+        return ResponseEntity.ok(usuarioService.atualizarDadosTelefone(id, telefoneDTO));
     }
 
     @PostMapping("/login")

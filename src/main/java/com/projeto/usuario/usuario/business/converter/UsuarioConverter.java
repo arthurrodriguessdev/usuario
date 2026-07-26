@@ -93,13 +93,29 @@ public class UsuarioConverter {
         return telefones.stream().map(this::telefoneParaTelefoneDto).toList();
     }
 
-    // Faz a mesclagem dos dados atualizados do DTO com os que não foram atualizados (entity)
+    /*
+    * Esses métodos são responsáveis pela atualização das entidades
+    * */
     public Usuario updateUsuario(Usuario entity, UsuarioDTO usuarioDto, String senhaEncriptada) {
         entity.setNome((usuarioDto.getNome() != null) ? usuarioDto.getNome() : entity.getNome());
         entity.setEmail((usuarioDto.getEmail() != null) ? usuarioDto.getEmail() : entity.getEmail());
         entity.setEnderecos(entity.getEnderecos());
         entity.setTelefones(entity.getTelefones());
         entity.setSenha((senhaEncriptada != null) ? senhaEncriptada : entity.getSenha());
+        return entity;
+    }
+
+    public Endereco updateEndereco(Endereco entity, EnderecoDTO enderecoDTO) {
+        entity.setBairro((enderecoDTO.getBairro() != null) ? enderecoDTO.getBairro() : entity.getBairro());
+        entity.setCep((enderecoDTO.getCep() != null) ? enderecoDTO.getCep() : entity.getCep());
+        entity.setRua((enderecoDTO.getRua() != null) ? enderecoDTO.getRua() : entity.getRua());
+        entity.setCidade((enderecoDTO.getCidade() != null) ? enderecoDTO.getCidade() : entity.getCidade());
+        return entity;
+    }
+
+    public Telefone updateTelefone(Telefone entity, TelefoneDTO telefoneDTO) {
+        entity.setNumero((telefoneDTO.getNumero() != null) ? telefoneDTO.getNumero() : entity.getNumero());
+        entity.setDdd((telefoneDTO.getDdd() != null) ? telefoneDTO.getDdd() : entity.getDdd());
         return entity;
     }
 }
