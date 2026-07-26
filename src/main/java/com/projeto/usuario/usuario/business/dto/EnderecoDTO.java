@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder // Essa anotação permite o padrão builder, usado para criação de objetos de forma mais simples
 public class EnderecoDTO {
+    private Long id;
     private String rua;
     private String bairro;
     private String cep;

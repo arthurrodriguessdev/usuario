@@ -29,13 +29,18 @@ public class Usuario implements UserDetails {
     private String senha;
 
     // Um usuário pode ter VÁRIOS endereços (OneToMany)
-    @OneToMany(cascade=CascadeType.ALL) // Se apagar o usuário, todos os endereços serão apagados também
+//    @OneToMany(cascade=CascadeType.ALL) // Se apagar o usuário, todos os endereços serão apagados também
     // Esse nome de campo ficará na tabela de Endereco
-    @JoinColumn(name="usuario_id", referencedColumnName="id")
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Endereco> enderecos;
 
-    @OneToMany(cascade=CascadeType.ALL)
-    @JoinColumn(name="usuario_id", referencedColumnName="id")
+    // Relacionamento unidirecional
+//  @OneToMany(cascade=CascadeType.ALL)
+//  @JoinColumn(name="usuario_id", referencedColumnName="id")
+
+    // Relacionamento bidirecional (endereço sabe quem é o usuário agora)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Telefone> telefones;
 
     // Métodos da classe UserDetails
