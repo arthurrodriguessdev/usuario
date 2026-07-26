@@ -38,6 +38,19 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    public UsuarioDTO atualizarDadosUsuario(UsuarioDTO dto, Long id){
+        Usuario usuarioEntity = usuarioRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFound("Usuário não encontrado"));
+
+        String senhaEncriptada = null;
+        if(dto != null && dto.getSenha() != null){
+            senhaEncriptada = passwordEncoder.encode(dto.getSenha());
+        }
+
+        Usuario usuarioAtualizado = usuarioConverter.updateUsuario(usuarioEntity, dto, senhaEncriptada);
+        return usuarioConverter.usuarioParaUsuarioDto(usuarioRepository.save(usuarioAtualizado));
+    }
+
     public void emailExiste(String email) {
         try {
             boolean existe = verificaEmailExistente(email);

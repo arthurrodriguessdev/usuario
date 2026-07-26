@@ -36,6 +36,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> atualizarDadosUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDto){
+        return ResponseEntity.ok(usuarioService.atualizarDadosUsuario(usuarioDto, id));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO){
         Authentication authentication = authenticationManager.authenticate(

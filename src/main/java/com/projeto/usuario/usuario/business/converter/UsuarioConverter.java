@@ -68,6 +68,7 @@ public class UsuarioConverter {
     // Conversão de endereço
     public EnderecoDTO enderecoParaEnderecoDto(Endereco endereco){
         return EnderecoDTO.builder()
+                .id(endereco.getId())
                 .rua(endereco.getRua())
                 .cep(endereco.getCep())
                 .cidade(endereco.getCidade())
@@ -82,6 +83,7 @@ public class UsuarioConverter {
     // Conversão de telefone
     public TelefoneDTO telefoneParaTelefoneDto(Telefone telefone){
         return TelefoneDTO.builder()
+                .id(telefone.getId())
                 .ddd(telefone.getDdd())
                 .numero(telefone.getNumero())
                 .build();
@@ -89,5 +91,15 @@ public class UsuarioConverter {
 
     public List<TelefoneDTO> listaTelefoneParaTelefonesDto(List<Telefone> telefones){
         return telefones.stream().map(this::telefoneParaTelefoneDto).toList();
+    }
+
+    // Faz a mesclagem dos dados atualizados do DTO com os que não foram atualizados (entity)
+    public Usuario updateUsuario(Usuario entity, UsuarioDTO usuarioDto, String senhaEncriptada) {
+        entity.setNome((usuarioDto.getNome() != null) ? usuarioDto.getNome() : entity.getNome());
+        entity.setEmail((usuarioDto.getEmail() != null) ? usuarioDto.getEmail() : entity.getEmail());
+        entity.setEnderecos(entity.getEnderecos());
+        entity.setTelefones(entity.getTelefones());
+        entity.setSenha((senhaEncriptada != null) ? senhaEncriptada : entity.getSenha());
+        return entity;
     }
 }
