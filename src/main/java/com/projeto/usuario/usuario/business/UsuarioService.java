@@ -30,7 +30,13 @@ public class UsuarioService {
     // Métodos auxiliares de busca
     private Usuario getUsuarioById(Long id){
         return usuarioRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFound("Usuário não encontrado"));
+                ()-> new ResourceNotFound("Usuário não encontrado."));
+    }
+
+    private Usuario getUsuarioByEmail(String email){
+        return usuarioRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFound("Usuário não encontrado.")
+        );
     }
 
     private Endereco getEnderecoById(Long id){
@@ -63,6 +69,11 @@ public class UsuarioService {
     public UsuarioDTO buscarUsuario(Long id){
         Usuario usuarioBuscar = getUsuarioById(id);
         return usuarioConverter.usuarioParaUsuarioDto(usuarioBuscar);
+    }
+
+    public UsuarioDTO buscarUsuarioPorEmail(String email){
+        Usuario usuarioBuacar = getUsuarioByEmail(email);
+        return usuarioConverter.usuarioParaUsuarioDto(usuarioBuacar);
     }
 
     public void deletarUsuario(Long id){
