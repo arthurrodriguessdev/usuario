@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -28,18 +27,8 @@ public class Usuario implements UserDetails {
     @Column(name="senha")
     private String senha;
 
-    // Um usuário pode ter VÁRIOS endereços (OneToMany)
-//    @OneToMany(cascade=CascadeType.ALL) // Se apagar o usuário, todos os endereços serão apagados também
-    // Esse nome de campo ficará na tabela de Endereco
-
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Endereco> enderecos;
-
-    // Relacionamento unidirecional
-//  @OneToMany(cascade=CascadeType.ALL)
-//  @JoinColumn(name="usuario_id", referencedColumnName="id")
-
-    // Relacionamento bidirecional (endereço sabe quem é o usuário agora)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Telefone> telefones;
 

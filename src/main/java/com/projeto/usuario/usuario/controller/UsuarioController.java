@@ -53,6 +53,18 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.atualizarDadosTelefone(id, telefoneDTO));
     }
 
+    @PostMapping("/enderecos")
+    public ResponseEntity<EnderecoDTO> cadastrarEndereco(
+            @RequestBody EnderecoDTO enderecoDTO, @RequestHeader("Authorization") String token){
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.cadastrarEndereco(enderecoDTO, token));
+    }
+
+    @PostMapping("/telefones")
+    public ResponseEntity<TelefoneDTO> cadastrarTelefone(
+            @RequestBody TelefoneDTO telefoneDTO, @RequestHeader("Authorization") String token){
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.cadastrarTelefone(telefoneDTO, token));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO){
         Authentication authentication = authenticationManager.authenticate(

@@ -7,7 +7,6 @@ import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component // Define que é uma classe gerenciada pelo spring, MAS não é service, controller, entity
@@ -32,13 +31,18 @@ public class UsuarioConverter {
                 .build();
     }
 
-    public List<Endereco> listaEnderecosDtoParaEndereco(List<EnderecoDTO> enderecosDto){
-        List<Endereco> listaEnderecos = new ArrayList<>();
-        enderecosDto.forEach(endereco ->{
-            listaEnderecos.add(this.enderecoDtoParaEndereco(endereco));
-        });
+    public Endereco enderecoDtoParaEndereco(EnderecoDTO enderecoDto, Usuario usuario){
+        return Endereco.builder()
+                .rua(enderecoDto.getRua())
+                .cep(enderecoDto.getCep())
+                .cidade(enderecoDto.getCidade())
+                .bairro(enderecoDto.getBairro())
+                .usuario(usuario)
+                .build();
+    }
 
-        return listaEnderecos;
+    public List<Endereco> listaEnderecosDtoParaEndereco(List<EnderecoDTO> enderecosDto){
+        return enderecosDto.stream().map(this::enderecoDtoParaEndereco).toList();
     }
 
     // Conversão de telefone
@@ -49,9 +53,15 @@ public class UsuarioConverter {
                 .build();
     }
 
+    public Telefone telefoneDtoParaTelefone(TelefoneDTO telefoneDTO, Usuario usuario){
+        return Telefone.builder()
+                .ddd(telefoneDTO.getDdd())
+                .numero(telefoneDTO.getNumero())
+                .usuario(usuario)
+                .build();
+    }
+
     public List<Telefone> listaTelefonesDtoParaTelefone(List<TelefoneDTO> telefonesDto){
-        // stream transforma em um fluxo para ser percorrido
-        // o map pega cada telefoneDto e faz a chamada do método passando ele como parâmetro
         return telefonesDto.stream().map(this::telefoneDtoParaTelefone).toList();
     }
 
@@ -99,8 +109,6 @@ public class UsuarioConverter {
     public Usuario updateUsuario(Usuario entity, UsuarioDTO usuarioDto, String senhaEncriptada) {
         entity.setNome((usuarioDto.getNome() != null) ? usuarioDto.getNome() : entity.getNome());
         entity.setEmail((usuarioDto.getEmail() != null) ? usuarioDto.getEmail() : entity.getEmail());
-        entity.setEnderecos(entity.getEnderecos());
-        entity.setTelefones(entity.getTelefones());
         entity.setSenha((senhaEncriptada != null) ? senhaEncriptada : entity.getSenha());
         return entity;
     }
