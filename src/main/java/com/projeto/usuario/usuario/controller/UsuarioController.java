@@ -1,9 +1,7 @@
 package com.projeto.usuario.usuario.controller;
 
 import com.projeto.usuario.usuario.business.UsuarioService;
-import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
-import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
-import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
+import com.projeto.usuario.usuario.business.dto.*;
 import com.projeto.usuario.usuario.infraestructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +23,12 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDTO> salvarUsuario(@RequestBody UsuarioDTO usuarioDto){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(usuarioService.salvarUsuario(usuarioDto));
+    }
+    // Refact
+    @PostMapping("/conta-servico")
+    public ResponseEntity<UsuarioServicoDTO> salvarUsuariosServico(@RequestBody UsuarioServicoDTO usuarioServicoDTO){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(usuarioService.salvarUsuarioServico(usuarioServicoDTO));
     }
 
     @GetMapping("/{id}")
@@ -71,10 +75,10 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO){
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        usuarioDTO.getEmail(), usuarioDTO.getSenha()
+                        loginDTO.getEmail(), loginDTO.getSenha()
                 )
         );
 

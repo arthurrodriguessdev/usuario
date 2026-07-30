@@ -3,6 +3,7 @@ package com.projeto.usuario.usuario.business.converter;
 import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
 import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
+import com.projeto.usuario.usuario.business.dto.UsuarioServicoDTO;
 import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
@@ -18,6 +19,22 @@ public class UsuarioConverter {
                 .senha(usuarioDTO.getSenha())
                 .enderecos(this.listaEnderecosDtoParaEndereco(usuarioDTO.getEnderecos()))
                 .telefones(this.listaTelefonesDtoParaTelefone(usuarioDTO.getTelefones()))
+                .build();
+    }
+
+    // Refact
+    public Usuario dtoServicoParaUsuario(UsuarioServicoDTO usuarioServicoDTO){
+        return Usuario.builder()
+                .senha(usuarioServicoDTO.getSenha())
+                .email(usuarioServicoDTO.getEmail())
+                .build();
+    }
+
+    // Refact
+    public UsuarioServicoDTO usuarioParaDtoServico(Usuario usuario){
+        return UsuarioServicoDTO.builder()
+                .senha(usuario.getSenha())
+                .email(usuario.getEmail())
                 .build();
     }
 
