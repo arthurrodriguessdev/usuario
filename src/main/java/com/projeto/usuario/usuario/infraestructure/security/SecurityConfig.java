@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/usuarios/login").permitAll() // Permite acesso ao endpoint de login sem autenticação
                         .requestMatchers("/usuarios/conta-servico").permitAll() // Refact
+                        .requestMatchers("/usuarios/token/validade").permitAll() // Refact
                         .requestMatchers(HttpMethod.GET, "/auth").permitAll()// Permite acesso ao endpoint GET /auth sem autenticação
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Permite acesso ao endpoint POST /usuario sem autenticação
                         .requestMatchers("/usuarios/**").authenticated() // Requer autenticação para qualquer endpoint que comece com /usuario/
