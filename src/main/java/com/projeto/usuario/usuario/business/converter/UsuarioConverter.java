@@ -8,17 +8,21 @@ import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 import java.util.List;
 
 @Component // Define que é uma classe gerenciada pelo spring, MAS não é service, controller, entity
 public class UsuarioConverter {
     public Usuario dtoParaUsuario(UsuarioDTO usuarioDTO){
+        List<Endereco> enderecos = this.listaEnderecosDtoParaEndereco(usuarioDTO.getEnderecos());
+        List<Telefone> telefones = this.listaTelefonesDtoParaTelefone(usuarioDTO.getTelefones());
         return Usuario.builder()
                 .nome(usuarioDTO.getNome())
                 .email(usuarioDTO.getEmail())
                 .senha(usuarioDTO.getSenha())
-                .enderecos(this.listaEnderecosDtoParaEndereco(usuarioDTO.getEnderecos()))
-                .telefones(this.listaTelefonesDtoParaTelefone(usuarioDTO.getTelefones()))
+                .enderecos((enderecos.isEmpty()) ? null : enderecos)
+                .telefones((telefones.isEmpty()) ? null : telefones)
                 .build();
     }
 
@@ -59,6 +63,10 @@ public class UsuarioConverter {
     }
 
     public List<Endereco> listaEnderecosDtoParaEndereco(List<EnderecoDTO> enderecosDto){
+        if(enderecosDto == null){
+            return Collections.emptyList();
+        }
+
         return enderecosDto.stream().map(this::enderecoDtoParaEndereco).toList();
     }
 
@@ -79,6 +87,10 @@ public class UsuarioConverter {
     }
 
     public List<Telefone> listaTelefonesDtoParaTelefone(List<TelefoneDTO> telefonesDto){
+        if(telefonesDto == null){
+            return Collections.emptyList();
+        }
+
         return telefonesDto.stream().map(this::telefoneDtoParaTelefone).toList();
     }
 
@@ -104,6 +116,10 @@ public class UsuarioConverter {
     }
 
     public List<EnderecoDTO> listaEnderecoParaEnderecosDto(List<Endereco> enderecos){
+        if(enderecos == null){
+            return Collections.emptyList();
+        }
+
         return enderecos.stream().map(this::enderecoParaEnderecoDto).toList();
     }
 

@@ -24,12 +24,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(usuarioService.salvarUsuario(usuarioDto));
     }
-    // Refact
-    @PostMapping("/conta-servico")
-    public ResponseEntity<UsuarioServicoDTO> salvarUsuariosServico(@RequestBody UsuarioServicoDTO usuarioServicoDTO){
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(usuarioService.salvarUsuarioServico(usuarioServicoDTO));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> buscarUsuario(@PathVariable Long id){

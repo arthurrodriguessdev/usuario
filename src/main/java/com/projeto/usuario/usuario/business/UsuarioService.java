@@ -4,7 +4,6 @@ import com.projeto.usuario.usuario.business.converter.UsuarioConverter;
 import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
 import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
-import com.projeto.usuario.usuario.business.dto.UsuarioServicoDTO;
 import com.projeto.usuario.usuario.exception.ConflictException;
 import com.projeto.usuario.usuario.exception.ResourceNotFound;
 import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
@@ -65,14 +64,6 @@ public class UsuarioService {
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha())); // Codificando password
         Usuario usuarioSalvar = usuarioRepository.save(usuarioConverter.dtoParaUsuario(usuarioDTO));
         return usuarioConverter.usuarioParaUsuarioDto(usuarioSalvar);
-    }
-
-    // Refact
-    public UsuarioServicoDTO salvarUsuarioServico(UsuarioServicoDTO usuarioServicoDTO){
-        emailExiste(usuarioServicoDTO.getEmail());
-        usuarioServicoDTO.setSenha(passwordEncoder.encode(usuarioServicoDTO.getSenha()));
-        Usuario usuarioSalvar = usuarioRepository.save(usuarioConverter.dtoServicoParaUsuario(usuarioServicoDTO));
-        return usuarioConverter.usuarioParaDtoServico(usuarioSalvar);
     }
 
     // Refact
