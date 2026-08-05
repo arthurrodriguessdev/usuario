@@ -78,10 +78,4 @@ public class UsuarioController {
 
         return ResponseEntity.ok(jwtUtil.generateToken(authentication.getName()));
     }
-
-    // Refact
-    @GetMapping("/token/validade")
-    public ResponseEntity<Boolean> verificarValidadeToken(@RequestParam("token") String token){
-        return ResponseEntity.ok(usuarioService.verificarValidadeToken(token));
-    }
 }

@@ -66,11 +66,6 @@ public class UsuarioService {
         return usuarioConverter.usuarioParaUsuarioDto(usuarioSalvar);
     }
 
-    // Refact
-    public boolean verificarValidadeToken(String token){
-        return jwtUtil.isTokenExpired(token);
-    }
-
     public UsuarioDTO buscarUsuario(Long id){
         Usuario usuarioBuscar = getUsuarioById(id);
         return usuarioConverter.usuarioParaUsuarioDto(usuarioBuscar);
