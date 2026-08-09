@@ -2,12 +2,9 @@ spring:
   application:
     name: usuario
   datasource:
-#    url: jdbc:postgresql://localhost:5432/db_usuario
-#    username: postgres
-#    password: 1801
-    url: jdbc:postgresql://postgres:5432/db_usuario
-    username: admin
-    password: admin
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME]
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,8 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 server:
-  port: 8080
-
+  port: ${PORTA_USUARIO}
 client:
   url:
-    viacep: https://viacep.com.br
+    viacep: ${URL_API_VIACEP}
