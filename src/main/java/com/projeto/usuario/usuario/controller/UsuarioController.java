@@ -1,6 +1,7 @@
 package com.projeto.usuario.usuario.controller;
 
 import com.projeto.usuario.usuario.business.UsuarioService;
+import com.projeto.usuario.usuario.business.ViaCepService;
 import com.projeto.usuario.usuario.business.dto.*;
 import com.projeto.usuario.usuario.infraestructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioService;
+    private final ViaCepService viaCepService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -77,5 +79,10 @@ public class UsuarioController {
         );
 
         return ResponseEntity.ok(jwtUtil.generateToken(authentication.getName()));
+    }
+
+    @GetMapping("/enderecos/cep")
+    public ResponseEntity<ViaCepDTO> buscarDadosCep(@RequestParam("cep") String cep){
+        return ResponseEntity.ok(viaCepService.buscarDadosCep(cep));
     }
 }

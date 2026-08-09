@@ -17,3 +17,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8080
+
+client:
+  url:
+    viacep: https://viacep.com.br
