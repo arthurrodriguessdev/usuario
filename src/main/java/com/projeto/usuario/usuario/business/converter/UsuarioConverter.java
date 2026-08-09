@@ -3,7 +3,6 @@ package com.projeto.usuario.usuario.business.converter;
 import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
 import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
-import com.projeto.usuario.usuario.business.dto.UsuarioServicoDTO;
 import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
@@ -12,52 +11,36 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
-@Component // Define que é uma classe gerenciada pelo spring, MAS não é service, controller, entity
+@Component
 public class UsuarioConverter {
     public Usuario dtoParaUsuario(UsuarioDTO usuarioDTO){
-        List<Endereco> enderecos = this.listaEnderecosDtoParaEndereco(usuarioDTO.getEnderecos());
-        List<Telefone> telefones = this.listaTelefonesDtoParaTelefone(usuarioDTO.getTelefones());
+        List<Endereco> enderecos = this.listaEnderecosDtoParaEndereco(usuarioDTO.enderecos());
+        List<Telefone> telefones = this.listaTelefonesDtoParaTelefone(usuarioDTO.telefones());
         return Usuario.builder()
-                .nome(usuarioDTO.getNome())
-                .email(usuarioDTO.getEmail())
-                .senha(usuarioDTO.getSenha())
+                .nome(usuarioDTO.nome())
+                .email(usuarioDTO.email())
+                .senha(usuarioDTO.senha())
                 .enderecos((enderecos.isEmpty()) ? null : enderecos)
                 .telefones((telefones.isEmpty()) ? null : telefones)
-                .build();
-    }
-
-    // Refact
-    public Usuario dtoServicoParaUsuario(UsuarioServicoDTO usuarioServicoDTO){
-        return Usuario.builder()
-                .senha(usuarioServicoDTO.getSenha())
-                .email(usuarioServicoDTO.getEmail())
-                .build();
-    }
-
-    // Refact
-    public UsuarioServicoDTO usuarioParaDtoServico(Usuario usuario){
-        return UsuarioServicoDTO.builder()
-                .senha(usuario.getSenha())
-                .email(usuario.getEmail())
                 .build();
     }
 
     // Conversão de endereço
     public Endereco enderecoDtoParaEndereco(EnderecoDTO enderecoDto){
         return Endereco.builder()
-                .rua(enderecoDto.getRua())
-                .cep(enderecoDto.getCep())
-                .cidade(enderecoDto.getCidade())
-                .bairro(enderecoDto.getBairro())
+                .rua(enderecoDto.rua())
+                .cep(enderecoDto.cep())
+                .cidade(enderecoDto.cidade())
+                .bairro(enderecoDto.bairro())
                 .build();
     }
 
     public Endereco enderecoDtoParaEndereco(EnderecoDTO enderecoDto, Usuario usuario){
         return Endereco.builder()
-                .rua(enderecoDto.getRua())
-                .cep(enderecoDto.getCep())
-                .cidade(enderecoDto.getCidade())
-                .bairro(enderecoDto.getBairro())
+                .rua(enderecoDto.rua())
+                .cep(enderecoDto.cep())
+                .cidade(enderecoDto.cidade())
+                .bairro(enderecoDto.bairro())
                 .usuario(usuario)
                 .build();
     }
@@ -73,15 +56,15 @@ public class UsuarioConverter {
     // Conversão de telefone
     public Telefone telefoneDtoParaTelefone(TelefoneDTO telefoneDTO){
         return Telefone.builder()
-                .ddd(telefoneDTO.getDdd())
-                .numero(telefoneDTO.getNumero())
+                .ddd(telefoneDTO.ddd())
+                .numero(telefoneDTO.numero())
                 .build();
     }
 
     public Telefone telefoneDtoParaTelefone(TelefoneDTO telefoneDTO, Usuario usuario){
         return Telefone.builder()
-                .ddd(telefoneDTO.getDdd())
-                .numero(telefoneDTO.getNumero())
+                .ddd(telefoneDTO.ddd())
+                .numero(telefoneDTO.numero())
                 .usuario(usuario)
                 .build();
     }
@@ -95,24 +78,22 @@ public class UsuarioConverter {
     }
 
     public UsuarioDTO usuarioParaUsuarioDto(Usuario usuario){
-        return UsuarioDTO.builder()
-                .nome(usuario.getNome())
-                .email(usuario.getEmail())
-                .senha(usuario.getSenha())
-                .enderecos(this.listaEnderecoParaEnderecosDto(usuario.getEnderecos()))
-                .telefones(this.listaTelefoneParaTelefonesDto(usuario.getTelefones()))
-                .build();
+        return new UsuarioDTO(
+                usuario.getNome(),
+                usuario.getEmail(),
+                usuario.getSenha(),
+                this.listaEnderecoParaEnderecosDto(usuario.getEnderecos()),
+                this.listaTelefoneParaTelefonesDto(usuario.getTelefones()));
     }
 
     // Conversão de endereço
     public EnderecoDTO enderecoParaEnderecoDto(Endereco endereco){
-        return EnderecoDTO.builder()
-                .id(endereco.getId())
-                .rua(endereco.getRua())
-                .cep(endereco.getCep())
-                .cidade(endereco.getCidade())
-                .bairro(endereco.getBairro())
-                .build();
+        return new EnderecoDTO(
+                endereco.getId(),
+                endereco.getRua(),
+                endereco.getCep(),
+                endereco.getCidade(),
+                endereco.getBairro());
     }
 
     public List<EnderecoDTO> listaEnderecoParaEnderecosDto(List<Endereco> enderecos){
@@ -125,11 +106,10 @@ public class UsuarioConverter {
 
     // Conversão de telefone
     public TelefoneDTO telefoneParaTelefoneDto(Telefone telefone){
-        return TelefoneDTO.builder()
-                .id(telefone.getId())
-                .ddd(telefone.getDdd())
-                .numero(telefone.getNumero())
-                .build();
+        return new TelefoneDTO(
+                telefone.getId(),
+                telefone.getDdd(),
+                telefone.getNumero());
     }
 
     public List<TelefoneDTO> listaTelefoneParaTelefonesDto(List<Telefone> telefones){
@@ -140,23 +120,23 @@ public class UsuarioConverter {
     * Esses métodos são responsáveis pela atualização das entidades
     * */
     public Usuario updateUsuario(Usuario entity, UsuarioDTO usuarioDto, String senhaEncriptada) {
-        entity.setNome((usuarioDto.getNome() != null) ? usuarioDto.getNome() : entity.getNome());
-        entity.setEmail((usuarioDto.getEmail() != null) ? usuarioDto.getEmail() : entity.getEmail());
+        entity.setNome((usuarioDto.nome() != null) ? usuarioDto.nome() : entity.getNome());
+        entity.setEmail((usuarioDto.email() != null) ? usuarioDto.email() : entity.getEmail());
         entity.setSenha((senhaEncriptada != null) ? senhaEncriptada : entity.getSenha());
         return entity;
     }
 
     public Endereco updateEndereco(Endereco entity, EnderecoDTO enderecoDTO) {
-        entity.setBairro((enderecoDTO.getBairro() != null) ? enderecoDTO.getBairro() : entity.getBairro());
-        entity.setCep((enderecoDTO.getCep() != null) ? enderecoDTO.getCep() : entity.getCep());
-        entity.setRua((enderecoDTO.getRua() != null) ? enderecoDTO.getRua() : entity.getRua());
-        entity.setCidade((enderecoDTO.getCidade() != null) ? enderecoDTO.getCidade() : entity.getCidade());
+        entity.setBairro((enderecoDTO.bairro() != null) ? enderecoDTO.bairro() : entity.getBairro());
+        entity.setCep((enderecoDTO.cep() != null) ? enderecoDTO.cep() : entity.getCep());
+        entity.setRua((enderecoDTO.rua() != null) ? enderecoDTO.rua() : entity.getRua());
+        entity.setCidade((enderecoDTO.cidade() != null) ? enderecoDTO.cidade() : entity.getCidade());
         return entity;
     }
 
     public Telefone updateTelefone(Telefone entity, TelefoneDTO telefoneDTO) {
-        entity.setNumero((telefoneDTO.getNumero() != null) ? telefoneDTO.getNumero() : entity.getNumero());
-        entity.setDdd((telefoneDTO.getDdd() != null) ? telefoneDTO.getDdd() : entity.getDdd());
+        entity.setNumero((telefoneDTO.numero() != null) ? telefoneDTO.numero() : entity.getNumero());
+        entity.setDdd((telefoneDTO.ddd() != null) ? telefoneDTO.ddd() : entity.getDdd());
         return entity;
     }
 }

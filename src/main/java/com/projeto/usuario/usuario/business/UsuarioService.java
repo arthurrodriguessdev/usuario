@@ -60,9 +60,19 @@ public class UsuarioService {
     }
 
     public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO){
-        emailExiste(usuarioDTO.getEmail());
-        usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha())); // Codificando password
-        Usuario usuarioSalvar = usuarioRepository.save(usuarioConverter.dtoParaUsuario(usuarioDTO));
+        if(usuarioRepository.existsByEmail(usuarioDTO.email())) {
+            throw new ConflictException("Já existe um usuário cadastrado com o e-mail informado");
+        }
+
+        // Instanciando novo dto record para fazer a codificação de senha
+        UsuarioDTO novoUsuarioDto = new UsuarioDTO(
+                usuarioDTO.nome(),
+                usuarioDTO.email(),
+                passwordEncoder.encode(usuarioDTO.senha()),
+                usuarioDTO.enderecos(), usuarioDTO.telefones()
+        );
+
+        Usuario usuarioSalvar = usuarioRepository.save(usuarioConverter.dtoParaUsuario(novoUsuarioDto));
         return usuarioConverter.usuarioParaUsuarioDto(usuarioSalvar);
     }
 
@@ -84,8 +94,8 @@ public class UsuarioService {
     public UsuarioDTO atualizarDadosUsuario(UsuarioDTO dto, Long id){
         Usuario usuarioEntity = getUsuarioById(id);
         String senhaEncriptada = null;
-        if(dto.getSenha() != null){
-            senhaEncriptada = passwordEncoder.encode(dto.getSenha());
+        if(dto.senha() != null){
+            senhaEncriptada = passwordEncoder.encode(dto.senha());
         }
 
         Usuario usuarioAtualizado = usuarioConverter.updateUsuario(usuarioEntity, dto, senhaEncriptada);
@@ -114,11 +124,5 @@ public class UsuarioService {
                 telefoneDTO, getUsuarioAutenticadoByToken(token));
         Telefone telefoneCadastrado = telefoneRepository.save(telefoneEntity);
         return usuarioConverter.telefoneParaTelefoneDto(telefoneCadastrado);
-    }
-
-    public void emailExiste(String email) {
-        if (usuarioRepository.existsByEmail(email)) {
-            throw new ConflictException("O e-mail já existe.");
-        }
     }
 }

@@ -72,7 +72,7 @@ public class UsuarioController {
     public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginDTO.getEmail(), loginDTO.getSenha()
+                        loginDTO.email(), loginDTO.senha()
                 )
         );
 
