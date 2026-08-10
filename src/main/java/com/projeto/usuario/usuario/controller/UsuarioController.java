@@ -3,13 +3,9 @@ package com.projeto.usuario.usuario.controller;
 import com.projeto.usuario.usuario.business.UsuarioService;
 import com.projeto.usuario.usuario.business.ViaCepService;
 import com.projeto.usuario.usuario.business.dto.*;
-import com.projeto.usuario.usuario.infraestructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
     private final UsuarioService usuarioService;
     private final ViaCepService viaCepService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvarUsuario(@RequestBody UsuarioDTO usuarioDto){
@@ -72,13 +66,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.email(), loginDTO.senha()
-                )
-        );
-
-        return ResponseEntity.ok(jwtUtil.generateToken(authentication.getName()));
+        return ResponseEntity.ok(usuarioService.autenticarUsuario(loginDTO));
     }
 
     @GetMapping("/enderecos/cep")
