@@ -17,3 +17,4 @@ server:
 client:
   url:
     viacep: ${URL_API_VIACEP}
+secretKey: ${SECRET_KEY_JWT}
