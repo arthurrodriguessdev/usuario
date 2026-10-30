@@ -21,7 +21,7 @@ public class Endereco {
     private String bairro;
     @Column(name="cep", length = 9)
     private String cep;
-    @Column(name="cidade", length = 9)
+    @Column(name="cidade", length = 100)
     private String cidade;
 
     @ManyToOne

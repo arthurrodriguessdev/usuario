@@ -1,10 +1,10 @@
-FROM gradle:8-jdk21 AS build
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 COPY . .
-RUN gradle build --no-daemon
+RUN chmod +x gradlew && ./gradlew build --no-daemon
 
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar /app/usuario.jar
+COPY --from=build /app/build/libs/usuario.jar /app/usuario.jar
 EXPOSE 8081
 CMD ["java", "-jar", "/app/usuario.jar"]

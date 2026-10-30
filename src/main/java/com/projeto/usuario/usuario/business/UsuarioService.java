@@ -5,6 +5,7 @@ import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
 import com.projeto.usuario.usuario.business.dto.LoginDTO;
 import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
+import com.projeto.usuario.usuario.business.dto.UsuarioResponseDTO;
 import com.projeto.usuario.usuario.exception.ConflictException;
 import com.projeto.usuario.usuario.exception.ResourceNotFound;
 import com.projeto.usuario.usuario.exception.UnauthorizedException;
@@ -22,6 +23,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,17 +39,17 @@ public class UsuarioService {
     private final TelefoneRepository telefoneRepository;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    private String usuarioNotFoundMessage = "Usuário não encontrado";
+    private static final String USUARIO_NOT_FOUND_MESSAGE = "Usuário não encontrado";
 
     // Métodos auxiliares de busca
     private Usuario getUsuarioById(Long id){
         return usuarioRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFound(usuarioNotFoundMessage));
+                ()-> new ResourceNotFound(USUARIO_NOT_FOUND_MESSAGE));
     }
 
     private Usuario getUsuarioByEmail(String email){
         return usuarioRepository.findByEmail(email).orElseThrow(
-                () -> new ResourceNotFound(usuarioNotFoundMessage)
+                () -> new ResourceNotFound(USUARIO_NOT_FOUND_MESSAGE)
         );
     }
 
@@ -61,16 +63,11 @@ public class UsuarioService {
                 () -> new ResourceNotFound("Telefone não encontrado."));
     }
 
-    private Usuario getUsuarioAutenticadoByToken(String token){
-        token = token.substring(7); // Retirando o "Bearer"
-        String emailUsuario = jwtUtil.extractUsername(token);
-
-        return usuarioRepository.findByEmail(emailUsuario).orElseThrow(
-                () -> new ResourceNotFound(usuarioNotFoundMessage)
-        );
+    private Usuario getUsuarioAutenticado(UserDetails authenticatedUser){
+        return getUsuarioByEmail(authenticatedUser.getUsername());
     }
 
-    public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO){
+    public UsuarioResponseDTO salvarUsuario(UsuarioDTO usuarioDTO){
         if(usuarioRepository.existsByEmail(usuarioDTO.email())) {
             throw new ConflictException("Já existe um usuário cadastrado com o e-mail informado");
         }
@@ -87,23 +84,27 @@ public class UsuarioService {
         return usuarioConverter.usuarioParaUsuarioDto(usuarioSalvar);
     }
 
-    public UsuarioDTO buscarUsuario(Long id){
-        Usuario usuarioBuscar = getUsuarioById(id);
-        return usuarioConverter.usuarioParaUsuarioDto(usuarioBuscar);
+    public UsuarioResponseDTO buscarUsuario(Long id, UserDetails authenticatedUser){
+        Usuario usuario = getUsuarioById(id);
+        verificarProprietario(usuario, authenticatedUser);
+        return usuarioConverter.usuarioParaUsuarioDto(usuario);
     }
 
-    public UsuarioDTO buscarUsuarioPorEmail(String email){
-        Usuario usuarioBuacar = getUsuarioByEmail(email);
-        return usuarioConverter.usuarioParaUsuarioDto(usuarioBuacar);
+    public UsuarioResponseDTO buscarUsuarioPorEmail(String email, UserDetails authenticatedUser){
+        if(!email.equals(authenticatedUser.getUsername())){
+            throw new ResourceNotFound(USUARIO_NOT_FOUND_MESSAGE);
+        }
+        return usuarioConverter.usuarioParaUsuarioDto(getUsuarioByEmail(email));
     }
 
-    public void deletarUsuario(Long id){
-        getUsuarioById(id);
+    public void deletarUsuario(Long id, UserDetails authenticatedUser){
+        verificarProprietario(getUsuarioById(id), authenticatedUser);
         usuarioRepository.deleteById(id);
     }
 
-    public UsuarioDTO atualizarDadosUsuario(UsuarioDTO dto, Long id){
+    public UsuarioResponseDTO atualizarDadosUsuario(UsuarioDTO dto, Long id, UserDetails authenticatedUser){
         Usuario usuarioEntity = getUsuarioById(id);
+        verificarProprietario(usuarioEntity, authenticatedUser);
         String senhaEncriptada = null;
         if(dto.senha() != null){
             senhaEncriptada = passwordEncoder.encode(dto.senha());
@@ -113,28 +114,50 @@ public class UsuarioService {
         return usuarioConverter.usuarioParaUsuarioDto(usuarioRepository.save(usuarioAtualizado));
     }
 
-    public EnderecoDTO atualizarDadosEndereco(Long idEndereco, EnderecoDTO enderecoDTO){
-        Endereco enderecoAtualizado = usuarioConverter.updateEndereco(getEnderecoById(idEndereco), enderecoDTO);
+    public EnderecoDTO atualizarDadosEndereco(
+            Long idEndereco,
+            EnderecoDTO enderecoDTO,
+            UserDetails authenticatedUser
+    ){
+        Endereco endereco = getEnderecoById(idEndereco);
+        verificarProprietario(endereco.getUsuario(), authenticatedUser, "Endereço não encontrado.");
+        Endereco enderecoAtualizado = usuarioConverter.updateEndereco(endereco, enderecoDTO);
         return usuarioConverter.enderecoParaEnderecoDto(enderecoRepository.save(enderecoAtualizado));
     }
 
-    public TelefoneDTO atualizarDadosTelefone(Long idTelefone, TelefoneDTO telefoneDTO){
-        Telefone telefoneAtualizado = usuarioConverter.updateTelefone(getTelefoneById(idTelefone), telefoneDTO);
+    public TelefoneDTO atualizarDadosTelefone(
+            Long idTelefone,
+            TelefoneDTO telefoneDTO,
+            UserDetails authenticatedUser
+    ){
+        Telefone telefone = getTelefoneById(idTelefone);
+        verificarProprietario(telefone.getUsuario(), authenticatedUser, "Telefone não encontrado.");
+        Telefone telefoneAtualizado = usuarioConverter.updateTelefone(telefone, telefoneDTO);
         return usuarioConverter.telefoneParaTelefoneDto(telefoneRepository.save(telefoneAtualizado));
     }
 
-    public EnderecoDTO cadastrarEndereco(EnderecoDTO enderecoDTO, String token){
+    public EnderecoDTO cadastrarEndereco(EnderecoDTO enderecoDTO, UserDetails authenticatedUser){
         Endereco enderecoEntity = usuarioConverter.enderecoDtoParaEndereco(
-                enderecoDTO, getUsuarioAutenticadoByToken(token));
+                enderecoDTO, getUsuarioAutenticado(authenticatedUser));
         Endereco enderecoCadastrado = enderecoRepository.save(enderecoEntity);
         return usuarioConverter.enderecoParaEnderecoDto(enderecoCadastrado);
     }
 
-    public TelefoneDTO cadastrarTelefone(TelefoneDTO telefoneDTO, String token){
+    public TelefoneDTO cadastrarTelefone(TelefoneDTO telefoneDTO, UserDetails authenticatedUser){
         Telefone telefoneEntity = usuarioConverter.telefoneDtoParaTelefone(
-                telefoneDTO, getUsuarioAutenticadoByToken(token));
+                telefoneDTO, getUsuarioAutenticado(authenticatedUser));
         Telefone telefoneCadastrado = telefoneRepository.save(telefoneEntity);
         return usuarioConverter.telefoneParaTelefoneDto(telefoneCadastrado);
+    }
+
+    private void verificarProprietario(Usuario usuario, UserDetails authenticatedUser){
+        verificarProprietario(usuario, authenticatedUser, USUARIO_NOT_FOUND_MESSAGE);
+    }
+
+    private void verificarProprietario(Usuario usuario, UserDetails authenticatedUser, String notFoundMessage){
+        if(usuario == null || !authenticatedUser.getUsername().equals(usuario.getEmail())){
+            throw new ResourceNotFound(notFoundMessage);
+        }
     }
 
     public String autenticarUsuario(LoginDTO loginDTO){

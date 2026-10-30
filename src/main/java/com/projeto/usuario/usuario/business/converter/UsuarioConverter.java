@@ -3,6 +3,7 @@ package com.projeto.usuario.usuario.business.converter;
 import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
 import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
 import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
+import com.projeto.usuario.usuario.business.dto.UsuarioResponseDTO;
 import com.projeto.usuario.usuario.infraestructure.entity.Endereco;
 import com.projeto.usuario.usuario.infraestructure.entity.Telefone;
 import com.projeto.usuario.usuario.infraestructure.entity.Usuario;
@@ -77,11 +78,10 @@ public class UsuarioConverter {
         return telefonesDto.stream().map(this::telefoneDtoParaTelefone).toList();
     }
 
-    public UsuarioDTO usuarioParaUsuarioDto(Usuario usuario){
-        return new UsuarioDTO(
+    public UsuarioResponseDTO usuarioParaUsuarioDto(Usuario usuario){
+        return new UsuarioResponseDTO(
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getSenha(),
                 this.listaEnderecoParaEnderecosDto(usuario.getEnderecos()),
                 this.listaTelefoneParaTelefonesDto(usuario.getTelefones()));
     }

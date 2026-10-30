@@ -51,10 +51,16 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named('bootJar') {
+	archiveFileName = 'usuario.jar'
+}
+
 sonarqube {
-    properties {
-        property "sonar.projectKey", "usuario"
-		property "sonar.login", "sqa_88bcd17c7b6aef08daa3222a5f6d043261146819"
-        property "sonar.host.url", System.getenv().getOrDefault("SONAR_HOST_URL", "http://localhost:9000")
-    }
+	properties {
+		property "sonar.projectKey", "usuario"
+		property "sonar.host.url", System.getenv().getOrDefault("SONAR_HOST_URL", "http://localhost:9000")
+		if (System.getenv("SONAR_TOKEN")) {
+			property "sonar.token", System.getenv("SONAR_TOKEN")
+		}
+	}
 }
