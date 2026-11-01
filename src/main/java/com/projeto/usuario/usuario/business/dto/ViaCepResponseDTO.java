@@ -1,6 +1,6 @@
 package com.projeto.usuario.usuario.business.dto;
 
-public record ViaCepDTO(
+public record ViaCepResponseDTO(
         String cep,
         String logradouro,
         String complemento,

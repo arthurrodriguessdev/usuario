@@ -1,6 +1,6 @@
-package com.projeto.usuario.usuario.business.dto;
+package com.projeto.usuario.usuario.business.dto.endereco;
 
-public record EnderecoDTO(
+public record EnderecoResponseDTO(
         Long id,
         String rua,
         String bairro,

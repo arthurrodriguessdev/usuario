@@ -2,38 +2,33 @@ package com.projeto.usuario.usuario.controller;
 
 import com.projeto.usuario.usuario.business.UsuarioService;
 import com.projeto.usuario.usuario.business.ViaCepService;
-import com.projeto.usuario.usuario.business.dto.EnderecoDTO;
-import com.projeto.usuario.usuario.business.dto.LoginDTO;
-import com.projeto.usuario.usuario.business.dto.TelefoneDTO;
-import com.projeto.usuario.usuario.business.dto.UsuarioDTO;
-import com.projeto.usuario.usuario.business.dto.UsuarioResponseDTO;
-import com.projeto.usuario.usuario.business.dto.ViaCepDTO;
+import com.projeto.usuario.usuario.business.dto.endereco.EnderecoResponseDTO;
+import com.projeto.usuario.usuario.business.dto.LoginRequestDTO;
+import com.projeto.usuario.usuario.business.dto.telefone.TelefoneRequestDTO;
+import com.projeto.usuario.usuario.business.dto.telefone.TelefoneResponseDTO;
+import com.projeto.usuario.usuario.business.dto.ViaCepResponseDTO;
+import com.projeto.usuario.usuario.business.dto.endereco.EnderecoRequestDTO;
+import com.projeto.usuario.usuario.business.dto.usuario.UsuarioRequestDTO;
+import com.projeto.usuario.usuario.business.dto.usuario.UsuarioResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/v1/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioService;
     private final ViaCepService viaCepService;
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> salvarUsuario(@RequestBody UsuarioDTO usuarioDto){
+    public ResponseEntity<UsuarioResponseDTO> salvarUsuario(@RequestBody @Valid UsuarioRequestDTO usuarioRequestDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(usuarioService.salvarUsuario(usuarioDto));
+                .body(usuarioService.salvarUsuario(usuarioRequestDTO));
     }
 
     @GetMapping("/{id}")
@@ -57,46 +52,50 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizarDadosUsuario(
-            @PathVariable Long id, @RequestBody UsuarioDTO usuarioDto,
+            @PathVariable Long id, @RequestBody @Valid UsuarioRequestDTO usuarioRequestDTO,
             @AuthenticationPrincipal UserDetails authenticatedUser){
-        return ResponseEntity.ok(usuarioService.atualizarDadosUsuario(usuarioDto, id, authenticatedUser));
+        return ResponseEntity.ok(usuarioService.atualizarDadosUsuario(usuarioRequestDTO, id, authenticatedUser));
     }
 
     @PutMapping("/enderecos/{id}")
-    public ResponseEntity<EnderecoDTO> atualizarDadosEndereco(
-            @PathVariable Long id, @RequestBody EnderecoDTO enderecoDTO,
+    public ResponseEntity<EnderecoResponseDTO> atualizarDadosEndereco(
+            @PathVariable Long id, @RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO,
             @AuthenticationPrincipal UserDetails authenticatedUser){
-        return ResponseEntity.ok(usuarioService.atualizarDadosEndereco(id, enderecoDTO, authenticatedUser));
+        return ResponseEntity.ok(usuarioService.atualizarDadosEndereco(id, enderecoRequestDTO, authenticatedUser));
     }
 
     @PutMapping("/telefones/{id}")
-    public ResponseEntity<TelefoneDTO> atualizarDadosTelefone(
-            @PathVariable Long id, @RequestBody TelefoneDTO telefoneDTO,
+    public ResponseEntity<TelefoneResponseDTO> atualizarDadosTelefone(
+            @PathVariable Long id, @RequestBody @Valid TelefoneRequestDTO telefoneRequestDTO,
             @AuthenticationPrincipal UserDetails authenticatedUser){
-        return ResponseEntity.ok(usuarioService.atualizarDadosTelefone(id, telefoneDTO, authenticatedUser));
+        return ResponseEntity.ok(usuarioService.atualizarDadosTelefone(id, telefoneRequestDTO, authenticatedUser));
     }
 
     @PostMapping("/enderecos")
-    public ResponseEntity<EnderecoDTO> cadastrarEndereco(
-            @RequestBody EnderecoDTO enderecoDTO, @AuthenticationPrincipal UserDetails authenticatedUser){
+    public ResponseEntity<EnderecoResponseDTO> cadastrarEndereco(
+            @RequestBody @Valid EnderecoRequestDTO enderecoRequestDTO,
+            @AuthenticationPrincipal UserDetails authenticatedUser
+    ){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(usuarioService.cadastrarEndereco(enderecoDTO, authenticatedUser));
+                .body(usuarioService.cadastrarEndereco(enderecoRequestDTO, authenticatedUser));
     }
 
     @PostMapping("/telefones")
-    public ResponseEntity<TelefoneDTO> cadastrarTelefone(
-            @RequestBody TelefoneDTO telefoneDTO, @AuthenticationPrincipal UserDetails authenticatedUser){
+    public ResponseEntity<TelefoneResponseDTO> cadastrarTelefone(
+            @RequestBody @Valid TelefoneRequestDTO telefoneRequestDTO,
+            @AuthenticationPrincipal UserDetails authenticatedUser
+    ){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(usuarioService.cadastrarTelefone(telefoneDTO, authenticatedUser));
+                .body(usuarioService.cadastrarTelefone(telefoneRequestDTO, authenticatedUser));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
-        return ResponseEntity.ok(usuarioService.autenticarUsuario(loginDTO));
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO){
+        return ResponseEntity.ok(usuarioService.autenticarUsuario(loginRequestDTO));
     }
 
     @GetMapping("/enderecos/cep")
-    public ResponseEntity<ViaCepDTO> buscarDadosCep(@RequestParam("cep") String cep){
+    public ResponseEntity<ViaCepResponseDTO> buscarDadosCep(@RequestParam("cep") String cep){
         return ResponseEntity.ok(viaCepService.buscarDadosCep(cep));
     }
 }

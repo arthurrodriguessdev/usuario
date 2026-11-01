@@ -1,6 +1,6 @@
 package com.projeto.usuario.usuario.business;
 
-import com.projeto.usuario.usuario.business.dto.ViaCepDTO;
+import com.projeto.usuario.usuario.business.dto.ViaCepResponseDTO;
 import com.projeto.usuario.usuario.infraestructure.client.ViaCepClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class ViaCepService {
         return cep;
     }
 
-    public ViaCepDTO buscarDadosCep(String cep){
+    public ViaCepResponseDTO buscarDadosCep(String cep){
         return viaCepClient.buscarDadosCep(processarCep(cep));
     }
 }
