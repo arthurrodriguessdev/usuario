@@ -1,9 +1,10 @@
 package com.projeto.usuario.usuario.infraestructure.security;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,9 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
+    @Value("${api.versao}")
+    private String versaoAPI;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userDetailsService);
@@ -30,10 +34,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/usuarios/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/enderecos/cep").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .requestMatchers("/usuarios/**").authenticated()
+                        .requestMatchers(versaoAPI + "usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, versaoAPI + "usuarios/enderecos/cep").permitAll()
+                        .requestMatchers(HttpMethod.POST, versaoAPI + "usuarios").permitAll()
+                        .requestMatchers(versaoAPI + "usuarios/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

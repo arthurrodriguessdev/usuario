@@ -18,3 +18,5 @@ client:
   url:
     viacep: ${URL_API_VIACEP:https://viacep.com.br}
 secretKey: ${SECRET_KEY_JWT}
+api:
+  versao: /api/v1/
